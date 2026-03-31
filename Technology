@@ -1,0 +1,280 @@
+npx create-next-app@latest vicktech --typescript --tailwind --eslint --app --yes
+cd vicktech
+npm install next-themes lucide-react
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+  --primary: 34 211 238;
+}
+
+body {
+  font-family: 'Inter', system_ui, sans-serif;
+}
+
+.logo-font {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.card {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 25px 50px -12px rgb(34 211 238 / 0.15);
+}
+
+.nav-link {
+  position: relative;
+}
+
+.nav-link:after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: rgb(var(--primary));
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover:after {
+  width: 100%;
+}
+'use client';
+
+import './globals.css';
+import { ThemeProvider } from 'next-themes';
+import { useEffect, useState } from 'react';
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          {mounted && children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+'use client';
+
+import Image from 'next/image';
+import { useTheme } from 'next-themes';
+import { Sun, Moon, Search, Menu, X } from 'lucide-react';
+import { useState } from 'react';
+
+const articles = [
+  {
+    id: 1,
+    title: "Why AI Agents Will Replace Most Software Engineers by 2028",
+    category: "Artificial Intelligence",
+    date: "Mar 28, 2026",
+    readTime: "8 min",
+    excerpt: "A deep dive into autonomous coding agents and the future of software development in Africa and beyond.",
+    image: "https://picsum.photos/id/1015/800/600",
+  },
+  {
+    id: 2,
+    title: "Kenya’s First Quantum Research Lab Goes Live",
+    category: "Quantum Computing",
+    date: "Mar 25, 2026",
+    readTime: "12 min",
+    excerpt: "Inside the groundbreaking partnership between Strathmore University and IBM Quantum.",
+    image: "https://picsum.photos/id/201/800/600",
+  },
+  {
+    id: 3,
+    title: "The $2.3 Billion Ransomware Attack That Almost Took Down M-PESA",
+    category: "Cybersecurity",
+    date: "Mar 22, 2026",
+    readTime: "6 min",
+    excerpt: "Critical lessons every African fintech founder and developer must learn now.",
+    image: "https://picsum.photos/id/870/800/600",
+  },
+  {
+    id: 4,
+    title: "The Rise of Edge AI in African Smart Cities",
+    category: "Future Tech",
+    date: "Mar 20, 2026",
+    readTime: "9 min",
+    excerpt: "How decentralized intelligence is transforming urban infrastructure across the continent.",
+    image: "https://picsum.photos/id/106/800/600",
+  },
+];
+
+export default function Home() {
+  const { theme, setTheme } = useTheme();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredArticles = articles.filter(article =>
+    article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    article.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className="min-h-screen">
+      {/* Navigation */}
+      <nav className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-50">
+        <div className="max-w-screen-2xl mx-auto px-6 py-5">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <div className="flex items-center gap-x-3">
+              <div className="w-11 h-11 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center">
+                <span className="text-white font-bold text-2xl logo-font">VT</span>
+              </div>
+              <div>
+                <span className="logo-font text-3xl font-semibold tracking-tighter">VickTech</span>
+                <span className="text-xs tracking-[2px] text-cyan-400 font-medium block -mt-1">.ORG</span>
+              </div>
+            </div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-x-9 text-sm font-medium">
+              <a href="#articles" className="nav-link">Articles</a>
+              <a href="#" className="nav-link">Categories</a>
+              <a href="#" className="nav-link">About</a>
+            </div>
+
+            {/* Right Controls */}
+            <div className="flex items-center gap-x-4">
+              {/* Search */}
+              <div className="relative hidden md:block">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search innovations..."
+                  className="bg-zinc-100 dark:bg-zinc-800 border border-transparent focus:border-cyan-400 w-80 pl-11 py-3 rounded-2xl text-sm outline-none placeholder:text-zinc-400"
+                />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 w-5 h-5" />
+              </div>
+
+              {/* Theme Toggle */}
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="w-11 h-11 flex items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+              >
+                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
+
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden w-11 h-11 flex items-center justify-center"
+              >
+                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+            <div className="px-6 py-8 flex flex-col gap-y-6 text-lg">
+              <a href="#articles" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Articles</a>
+              <a href="#" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Categories</a>
+              <a href="#" className="nav-link" onClick={() => setMobileMenuOpen(false)}>About</a>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* Hero */}
+      <header className="bg-gradient-to-br from-zinc-900 to-black py-24 md:py-32 text-white">
+        <div className="max-w-screen-2xl mx-auto px-6">
+          <div className="max-w-3xl">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold logo-font tracking-tighter leading-none">
+              TECH THAT SHAPES<br />THE FUTURE
+            </h1>
+            <p className="mt-6 text-xl md:text-2xl text-zinc-400 max-w-lg">
+              Independent insights on AI, quantum computing, cybersecurity, and emerging technology from Nairobi.
+            </p>
+            <a 
+              href="#articles"
+              className="mt-10 inline-flex items-center gap-x-3 bg-cyan-400 hover:bg-cyan-300 text-zinc-950 font-semibold px-8 py-4 rounded-2xl text-lg transition-all"
+            >
+              Explore Latest Articles
+              <span>→</span>
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* Articles Section */}
+      <section id="articles" className="max-w-screen-2xl mx-auto px-6 py-20">
+        <div className="flex justify-between items-end mb-12">
+          <h2 className="text-4xl font-semibold logo-font tracking-tight">Latest from VickTech</h2>
+          <span className="text-sm text-zinc-500 hidden md:block">
+            {filteredArticles.length} articles
+          </span>
+        </div>
+
+        {/* Responsive Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {filteredArticles.map((article) => (
+            <article
+              key={article.id}
+              className="card bg-white dark:bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800 group cursor-pointer"
+            >
+              <div className="relative h-56 overflow-hidden">
+                <Image
+                  src={article.image}
+                  alt={article.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                />
+                <div className="absolute top-4 left-4 bg-black/70 text-white text-xs px-4 py-1.5 rounded-2xl font-medium">
+                  {article.category}
+                </div>
+              </div>
+
+              <div className="p-6">
+                <h3 className="font-semibold text-xl leading-tight line-clamp-3 group-hover:text-cyan-400 transition-colors">
+                  {article.title}
+                </h3>
+                <p className="mt-4 text-zinc-600 dark:text-zinc-400 text-sm line-clamp-3">
+                  {article.excerpt}
+                </p>
+                <div className="mt-6 flex items-center justify-between text-xs text-zinc-500">
+                  <span>Vick Omondi</span>
+                  <span>{article.date} • {article.readTime}</span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-zinc-900 text-zinc-400 py-16 border-t border-zinc-800">
+        <div className="max-w-screen-2xl mx-auto px-6 text-center">
+          <div className="flex items-center justify-center gap-x-3 mb-6">
+            <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-xl logo-font">VT</span>
+            </div>
+            <span className="logo-font text-2xl font-medium text-white">VickTech</span>
+          </div>
+          <p className="text-sm">© 2026 Vick Omondi • Independent Tech Intelligence from Nairobi, Kenya</p>
+          <p className="text-xs mt-4 text-zinc-500">Building the future, one insight at a time</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+npm run dev
